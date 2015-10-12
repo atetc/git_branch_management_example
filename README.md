@@ -11,13 +11,13 @@ Version 1.0:
 
 Version 2.0:
 
-1. App close confirm dialog "Are you sure?" "Yes" "No"
+1. App close confirm dialog "Are you sure?" "Yes" "No" - zahittalipov
 
-2. Menu with "About" item
+2. Menu with "About" item - ilyamodder
 
-3. Logo
+3. Logo - DimaKron
 
-4. AppName, Login screen name
+4. AppName, Login screen name - 
  
 5. About screen makeup
 
