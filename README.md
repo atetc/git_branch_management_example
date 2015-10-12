@@ -17,7 +17,7 @@ Version 2.0:
 
 3. Logo - DimaKron
 
-4. AppName, Login screen name - 
+4. AppName, Login screen name - rama333
  
 5. About screen makeup
 
