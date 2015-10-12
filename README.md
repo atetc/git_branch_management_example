@@ -38,7 +38,7 @@ Version 2.0:
 
 12. Open success screen after 3 sec (11)
 
-13. Network error dialog
+13. Check network status & show network error dialog
 
 14. If pass is empty - set progress screen description to "Registration" (7)
 
