@@ -1,10 +1,7 @@
-Android Activity Recognition API Sample
+Git branch management example
 ========================================
 
-Here you will find a functional project for Eclipse and Android Studio demonstrating Android's Activity Recognition APIs.
-
 Version 1.0:
------
 
 1. ---
 
