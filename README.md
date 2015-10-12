@@ -19,7 +19,7 @@ Version 2.0:
 
 4. AppName, Login screen name - rama333
  
-5. About screen makeup
+5. About screen makeup - BackDuck
 
 6. Email validation - must contain ".ru"
 
