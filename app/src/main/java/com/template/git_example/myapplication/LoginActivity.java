@@ -280,31 +280,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Are you sure?");
-        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case Dialog.BUTTON_POSITIVE: {
-                        finish();
-                        break;
-                    }
-                    case Dialog.BUTTON_NEGATIVE: {
-                        break;
-                    }
-                }
-            }
-        };
-        builder.setPositiveButton("Yes", listener);
-        builder.setNegativeButton("No", listener);
-        builder.create();
 
-
-    }
 
     private interface ProfileQuery {
         String[] PROJECTION = {
@@ -375,5 +351,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Are you sure?");
+        DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case Dialog.BUTTON_POSITIVE: {
+                        finish();
+                        break;
+                    }
+                    case Dialog.BUTTON_NEGATIVE: {
+                        break;
+                    }
+                }
+            }
+        };
+        builder.setPositiveButton("Yes", listener);
+        builder.setNegativeButton("No", listener);
+        builder.create();
+        builder.show();
+    }
 }
 
