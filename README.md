@@ -21,7 +21,7 @@ Version 2.0:
  
 5. About screen makeup - BackDuck
 
-6. Email validation - must contain ".ru"
+6. Email validation - must contain ".ru" - Smer4ig
 
 7. Password validation - min size = 10
 
