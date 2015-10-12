@@ -10,6 +10,7 @@
 # User-specific stuff:
 # .idea/workspace.xml
 # .idea/tasks.xml
+/git_branch_management_example.iml
 # .idea/dictionaries
 
 # Sensitive or high-churn files:
