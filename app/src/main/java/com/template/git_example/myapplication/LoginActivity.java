@@ -274,7 +274,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        // Do nothing
     }
 
     private interface ProfileQuery {
@@ -303,6 +303,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
+        public static final int TIME = 2000;
         private final String mEmail;
         private final String mPassword;
 
@@ -317,7 +318,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                Thread.sleep(TIME);
             } catch (InterruptedException e) {
                 return false;
             }
