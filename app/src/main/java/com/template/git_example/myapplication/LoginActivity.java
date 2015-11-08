@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -20,6 +21,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,6 +34,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import rx.Observable;
+import rx.android.widget.WidgetObservable;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -44,6 +50,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private String TAG = "LoginActivity";
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -62,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mEmailSignInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,18 +80,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        signInButtonStatus();
+
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +93,45 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    private Observable<Boolean> validPassword(){
+        Observable<Boolean> passwordValid = WidgetObservable.text(mPasswordView)
+                .map(mPasswordText -> mPasswordText.text())
+                .map(mText -> mText.length() > 10);
+
+        passwordValid.distinctUntilChanged()
+                .doOnNext(mPassword -> Log.d(TAG, "Password " + (mPassword ? "Valid" : "Invalid")))
+                .map(mPassword -> mPassword ? Color.BLACK : Color.RED)
+                .subscribe(color -> mPasswordView.setTextColor(color));
+
+        return passwordValid;
+    }
+
+    private Observable<Boolean> validEmail(){
+        final Pattern emailPattern = Pattern.compile(
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+        Observable<Boolean> emailValid = WidgetObservable.text(mEmailView)
+                .map(mEmailText -> mEmailText.text())
+                .map(mText -> emailPattern.matcher(mText).matches());
+
+        emailValid.distinctUntilChanged()
+                .doOnNext( b -> Log.d(TAG, "Email " + (b ? "Valid" : "Invalid")))
+                .map(b -> b ? Color.BLACK : Color.RED)
+                .subscribe(color -> mEmailView.setTextColor(color));
+
+        return emailValid;
+    }
+
+    private void signInButtonStatus(){
+
+        Observable<Boolean> signInEnabled =
+                Observable.combineLatest(validPassword(), validEmail(), (a, b) -> a && b);
+        signInEnabled.distinctUntilChanged()
+                .doOnNext(b -> Log.d(TAG, "Button " + (b ? "Enabled" : "Disabled")))
+                .subscribe(enabled -> mEmailSignInButton.setEnabled(enabled));
     }
 
     private void populateAutoComplete() {
@@ -160,24 +199,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
@@ -191,15 +212,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
-    }
-
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
-    }
 
     /**
      * Shows the progress UI and hides the login form.
